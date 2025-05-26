@@ -16,12 +16,12 @@ def main():
     sizeLimit = 10 # mb
     sizeLimitBytes = sizeLimit * 1024 * 1024 # to megabytes
 
-    if filePathCheck.stat().st_size <= sizeLimitBytes and filePathCheck.suffix == "mp4": # binary not metric
-        print("file size already small")
-        return
-
     if not(filePathCheck.exists() and filePathCheck.is_file()):
         print("file / path invalid")
+        return
+
+    if filePathCheck.stat().st_size <= sizeLimitBytes and filePathCheck.suffix == "mp4": # binary not metric
+        print("file size already small")
         return
 
     filePath = f"\"{filePathCheck.absolute()}\""
