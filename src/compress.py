@@ -36,7 +36,7 @@ def compress(filePath: str):
         print("output file already exists")
         return
 
-    audioBitrate = 96 # audio kb/s (96, 128, 256, 384, ...)
+    audioBitrate = 64 # audio kb/s (96, 128, 256, 384, ...)
     bitSize = sizeLimit * 8 # to megabits
     bitSize *= 1000 # to kilobits
     audioSize = audioBitrate * seconds
