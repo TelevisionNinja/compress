@@ -15,7 +15,7 @@ def compress(filePath: str):
         print("file / path invalid")
         return
 
-    if filePathCheck.stat().st_size <= sizeLimitBytes and filePathCheck.suffix == "mp4": # binary not metric
+    if filePathCheck.stat().st_size <= sizeLimitBytes and filePathCheck.suffix == ".mp4": # binary not metric
         print("file size already small")
         return
 
