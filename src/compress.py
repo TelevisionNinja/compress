@@ -5,12 +5,7 @@ import math
 import platform
 
 
-def main():
-    if len(sys.argv) != 2:
-        print("wrong args")
-        return
-
-    filePath = sys.argv[1]
+def compress(filePath: str):
     filePathCheck = pathlib.Path(filePath)
 
     sizeLimit = 10 # mb
@@ -32,7 +27,7 @@ def main():
         print("invalid duration")
         return
 
-    outputName = "vid"
+    outputName = filePathCheck.stem + "_compressed"
     outputExtension = "mp4"
     outputFileName = outputName + "." + outputExtension
     parentDirectory = filePathCheck.parent.absolute()
@@ -41,15 +36,18 @@ def main():
         print("output file already exists")
         return
 
-    audioBitrate = 128 # audio kb/s
-    bitrate = sizeLimit * 8 # to megabits
-    bitrate *= 1000 # to kilo bits
+    audioBitrate = 96 # audio kb/s (96, 128, 256, 384, ...)
+    bitSize = sizeLimit * 8 # to megabits
+    bitSize *= 1000 # to kilobits
     audioSize = audioBitrate * seconds
 
-    if bitrate > audioSize:
-        bitrate -= audioSize # account for audio
+    if bitSize > audioSize:
+        bitSize -= audioSize # account for audio
+    else:
+        print("unable to compress into smaller size")
+        return
 
-    bitrate /= seconds
+    bitrate = bitSize / seconds
     bitrate = int(bitrate)
 
     isWindows = platform.system() == "Windows"
@@ -77,6 +75,50 @@ def main():
         bitrate = int(bitrate)
 
         os.remove(outputFile.absolute())
+
+
+def compressVideosInDirectory(directory: str):
+    pathCheck = pathlib.Path(directory)
+
+    if not pathCheck.exists():
+        print("directory invalid")
+        return
+
+    if pathCheck.is_file():
+        print("not a directory")
+        return
+
+    files = os.listdir(pathCheck.absolute())
+
+    for file in files:
+        file = os.path.join(pathCheck.absolute(), file)
+        fullFilePath = pathlib.Path(file)
+
+        if fullFilePath.is_file():
+            compress(fullFilePath.absolute())
+
+
+def main():
+    if len(sys.argv) == 1:
+        directoryPath = os.path.abspath("/compress/videos/")
+        compressVideosInDirectory(directoryPath)
+        return
+
+    if len(sys.argv) != 2:
+        print("wrong args")
+        return
+
+    filePath = sys.argv[1]
+    filePathCheck = pathlib.Path(filePath)
+
+    if not filePathCheck.exists():
+        print("file / path invalid")
+        return
+
+    if filePathCheck.is_file():
+        compress(filePathCheck.absolute())
+    else:
+        compressVideosInDirectory(filePathCheck.absolute())
 
 
 if __name__ == "__main__":
